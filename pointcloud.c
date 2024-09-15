@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "pointcloud.h"
 
 /**
  * @author Sara Theriault
@@ -40,13 +41,12 @@ void stat1(double point[][3], int row)
     int x = 0;
     int y = 1;
     int height = 2;
-    int column = 3; //assuming data points will always be 3 per row
     double min = point[0][height];
     double max;
-    double avgHeight;
+    double avgHeight = 0;
     int minRow;
     int maxRow;
-    
+
     for(int i = 0; i < row; i++){
         if(min > point[i][height]){
             min = point[i][height];
@@ -62,9 +62,9 @@ void stat1(double point[][3], int row)
 
     avgHeight /= 3;
 
-    printf("\nMaximum height: %lf x = %lf, y = %lf\n", max, point[maxRow][x], point[maxRow][x]);
-    printf("Minimum height: %lf x = %lf, y = %lf\n", min, point[minRow][x], point[minRow][x]);
-    printf("Average height for all data points: %lf\n", avgHeight);
-
+    printf("\n~~~ Printing Stat1 ~~~");
+    printf("\nMaximum height: %lf\nAt (x: %lf, y: %lf)\n", max, point[maxRow][x], point[maxRow][x]);
+    printf("Minimum height: %lf\nAt (x: %lf, y: %lf)\n", min, point[minRow][y], point[minRow][y]);
+    printf("Average height: %lf\n\n", avgHeight);
     
 }

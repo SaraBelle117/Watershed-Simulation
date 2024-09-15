@@ -1,6 +1,6 @@
 
-stat: pointcloud.c
-	gcc -Wall -g -o stat pointcloud.c
+stat1: pointcloud.c
+	gcc -Wall -g -o stat1 pointcloud.c
 
 clean:
-	rm -f stat
+	rm -f stat1
