@@ -6,7 +6,7 @@
  */
 
 
-void stat1(double point[][3], int size);
+//void stat1(double point[][3], int size);
 
 int main()
 {
@@ -46,7 +46,7 @@ void stat1(double point[][3], int row)
     double avgHeight;
     int minRow;
     int maxRow;
-
+    
     for(int i = 0; i < row; i++){
         if(min > point[i][height]){
             min = point[i][height];
@@ -68,4 +68,3 @@ void stat1(double point[][3], int row)
 
     
 }
-
