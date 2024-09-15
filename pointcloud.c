@@ -35,7 +35,7 @@ void stat1()
                 min = height;
                 max = height;
             }
-            
+
             if(min > height){
                 min = height;
                 minX = x;
@@ -49,7 +49,13 @@ void stat1()
         avgHeight += height;
     }
     //divides the sum of all avg height by the number of heights given
-    avgHeight /= row;
+    if(row != 0){
+        avgHeight /= row;
+    }
+    else 
+    {
+        printf("Error. No data found.");
+    }
 
     printf("\n~~~ Printing Stat1 ~~~");
     printf("\nMaximum height: %lf\nAt (x: %lf, y: %lf)\n", max, maxX, maxY);
