@@ -1,4 +1,6 @@
 # coms3270P1
+By Sara Theriault
+Com S 3270
 
 ## Project 1:
 
@@ -7,7 +9,6 @@ This program will simulate water flow over a terrain when it rains. The purposes
 
 Features: stat function (in pointcloud.c) which prints the minimum, maximum, and average height for the given data points. It also prints the x & y coordinates for the min and max data points. 
 
-Known errors and issues: N/A
+Known errors and issues: Some issues at first with the repository for GitLab trying to use a old verson of my repo. Fix: remember to use "git pull" to make sure I am using the updated version of my repository. 
 
-## Sara Theriault
 
