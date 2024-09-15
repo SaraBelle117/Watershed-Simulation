@@ -19,7 +19,7 @@ So far, the pointcloud.c file contains the function stat which is part of the ma
 This project was made using Visual Studio Code and GitLab. A personal access token was necessary to clone my repo in VS code as well as Pyrite. I was able to run my code in Pyrite using a personal access token and the following line of code (for future reference): ssh sarab117@pyrite-n4.cs.iastate.edu --> I used -v and -vvv to help debug when this didn't work at first. The -n4 was a suggestion from one of the TAs given in Piazza. 
 
 ## Building the Project
-The first part of the project
+The first part of the project was making sure the function "stat1" can read file from input. Initially, I thought we were reading files, so I implemented that way. Once I realized my mistake, I mistakenly assumed we would be able to save input to some sort of array, and implemented it using an array. I finally got to the point where I understood we could use ./stat1 < test.xyz so the file should read from standard input. I just ended up reformatting my existing code to use the correct input going forward. 
 
 ## Testing
 So far, testing is used with a array that is in the main function in pointcloud.c. I used the files test.xyz, test1.xyz, and test2.xyz to verify that my code is working so far. 
