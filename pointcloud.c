@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "pointcloud.h"
+#include "util.h"
 
 /**
  * @author Sara Theriault
@@ -13,11 +14,11 @@ int main()
     return 0;
 }
 
-/*
-    Reads a point cloud stream until the end, and prints out the
-    height and grid location of the minimum height & maximum height.
-    It should also print out the average height of all data points
-    No return type 
+/**
+ *  Reads a point cloud stream until the end, and prints out the
+ *  height and grid location of the minimum height & maximum height.
+ *  It should also print out the average height of all data points
+ *  No return type 
 */
 
 void stat1()
@@ -61,4 +62,22 @@ void stat1()
     printf("\nMaximum height: %lf\nAt (x: %lf, y: %lf)\n", max, maxX, maxY);
     printf("Minimum height: %lf\nAt (x: %lf, y: %lf)\n", min, minX, minY);
     printf("Average height: %lf\n\n", avgHeight);
+}
+
+/**
+ * Reads point cloud data from steam and
+ * stores each point an expanding list
+ */
+readPointCloudData(FILE *stream, int *rosterWidth, List* pc)
+{
+    //FIXME: ADD
+
+}
+
+/**
+ * 
+ */
+void imagePointCloud(List *l, char *fileName)
+{
+
 }
