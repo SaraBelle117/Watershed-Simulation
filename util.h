@@ -1,5 +1,6 @@
 #ifndef UTIL_H
 #define UTIL_H
+#define INDEX(row, col, numCol) ((row)*(numCol)+(col))
 
 typedef struct 
 {   

@@ -7,7 +7,7 @@ typedef struct
 {
    double x;
    double y;
-   double z;
+   double z; //height
    double height;
    double *north;
    double *south;
