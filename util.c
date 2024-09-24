@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "util.h"
+#include "pointcloud.h"
 
 /**
  * allocate space for a 2D array &
