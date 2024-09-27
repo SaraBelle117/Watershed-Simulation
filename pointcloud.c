@@ -7,12 +7,6 @@
  * Com S 3270
  */
 
-int main()
-{   
-   stat1();
-
-    return 0;
-}
 
 /**
  *  Reads a point cloud stream until the end, and prints out the
@@ -20,7 +14,6 @@ int main()
  *  It should also print out the average height of all data points
  *  No return type 
 */
-
 void stat1()
 {
     double x, y, height;
@@ -70,14 +63,20 @@ void stat1()
  */
 readPointCloudData(FILE *stream, int *rosterWidth, List* pc)
 {
-    //FIXME: ADD
+    fscanf(stdin, "%d", &rosterWidth);
+    pcd_t data;
+    while(fscanf(stdin, "%lf %lf %lf", &data.x, &data.y, &data.height )){
+
+    }
+
 
 }
 
 /**
  * 
  */
-void imagePointCloud(List *l, char *fileName)
+void imagePointCloud(List *l, int width, char *fileName)
 {
+    
 
 }
