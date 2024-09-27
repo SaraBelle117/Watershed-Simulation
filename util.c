@@ -7,8 +7,14 @@
  * allocate space for a 2D array &
  * initializes all elements to zero
  */
-void *allocateArray(int rows, int columns){
-    return (double*)calloc((rows * columns), rows * columns* sizeof(double));
+void *allocateArray(int rows, int columns)
+{
+    List *l;
+   l->data = (double*)calloc((rows * columns), sizeof(double));
+    if(!l->data){
+        return NULL;
+    }
+    return l->data;
 }
 
 /**
@@ -17,12 +23,12 @@ void *allocateArray(int rows, int columns){
  * capacity 
  * default max size = 10
  */
-int listInit(List* l, int max_element_size){
+int listInit(List* l, int max_element_size)
+{
     l->max_size = 10; //default max size = 10
     l->max_element_size = max_element_size; //setting capacity
     l->size = 0; //current list is empty
     l->data = allocateArray(l->max_size, l->max_element_size);
-
     return 0;
 }
 
@@ -31,7 +37,8 @@ int listInit(List* l, int max_element_size){
  * doubles the size of the list if the list is
  * full
  */
-void listAddEnd(List* l, void* elmt){
+void listAddEnd(List* l, void* elmt)
+{
     if(l->size >= l->max_size){
         int double_size = l->max_size * 2;
         void *arr = malloc((double_size)* l->max_element_size);
@@ -41,7 +48,7 @@ void listAddEnd(List* l, void* elmt){
         l->max_size = double_size;
     }
 
-    memcpy(elmt, l->max_element_size);
+    memcpy(l->data, elmt, (l->max_size)*(l->max_element_size));
     l->size++; //added element, so size is increased
 }
 
@@ -51,6 +58,10 @@ void listAddEnd(List* l, void* elmt){
  * (retrieves an element in the list by
  * index)
  */
-void *listGet(List* l, int index){
-   return l->data;
+void *listGet(List* l, int index)
+{
+    if(index < 0 || index >= l->size){
+        return NULL;
+    }
+   return l->data + index;
 }

@@ -6,8 +6,8 @@ typedef struct
 {   
     int max_size;   //max possible size of list
     int max_element_size; //max size of element in array
-    void* data;
-    int size;
+    void* data; //pointer to the current array containing data
+    int size; //current size of the list
 }List;
 
 int listInit(List* l, int max_element_size);

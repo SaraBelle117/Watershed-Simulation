@@ -29,7 +29,6 @@ void stat1()
                 min = height;
                 max = height;
             }
-
             if(min > height){
                 min = height;
                 minX = x;
@@ -61,15 +60,19 @@ void stat1()
  * Reads point cloud data from steam and
  * stores each point an expanding list
  */
-readPointCloudData(FILE *stream, int *rosterWidth, List* pc)
+readPointCloudData(FILE *stream, int *rasterWidth, List* pc)
 {
-    fscanf(stdin, "%d", &rosterWidth);
+    stream = fopen("test.xyz", "r");
+    fscanf(stream, "%d", &rasterWidth);
     pcd_t data;
-    while(fscanf(stdin, "%lf %lf %lf", &data.x, &data.y, &data.height )){
-
+    while(fscanf(stream,"%lf %lf %lf", &data.x, &data.y, &data.z)==3){
+            pc = allocateArray(rasterWidth, rasterWidth);
+            
     }
 
 
+
+    fclose(stream);
 }
 
 /**

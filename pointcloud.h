@@ -8,7 +8,7 @@ typedef struct
    double x;
    double y;
    double z; //height
-   double height;
+   double water;
    double *north;
    double *south;
    double *west;
