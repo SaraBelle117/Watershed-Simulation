@@ -48,7 +48,7 @@ void listAddEnd(List* l, void* elmt)
         l->max_size = double_size;
     }
 
-    memcpy(l->data, elmt, (l->max_size)*(l->max_element_size));
+    memcpy((char*)l->data + (l->size * l->max_element_size), elmt, (l->max_size)*(l->max_element_size));
     l->size++; //added element, so size is increased
 }
 
@@ -63,5 +63,5 @@ void *listGet(List* l, int index)
     if(index < 0 || index >= l->size){
         return NULL;
     }
-   return l->data + index;
+   return (char*)l->data + (index * l->max_element_size);
 }

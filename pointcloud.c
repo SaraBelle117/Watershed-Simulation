@@ -12,7 +12,7 @@
  *  Reads a point cloud stream until the end, and prints out the
  *  height and grid location of the minimum height & maximum height.
  *  It should also print out the average height of all data points
- *  No return type 
+ *  @return void (no return type)
 */
 void stat1()
 {
@@ -54,32 +54,64 @@ void stat1()
     printf("\nMaximum height: %lf\nAt (x: %lf, y: %lf)\n", max, maxX, maxY);
     printf("Minimum height: %lf\nAt (x: %lf, y: %lf)\n", min, minX, minY);
     printf("Average height: %lf\n\n", avgHeight);
+
+}
+
+/**
+ * stat function for imagePointCloud
+ * @param pointer to list
+ * @return stats for pointcloud data
+ */
+PointCloudStats stat2(List *l){
+    PointCloudStats stats;
+    pcd_t* setVal = listGet(l, 0);
+    stats.min = *setVal;
+    stats.max = *setVal;
+    for(int i = 0; i < l->size; i++){
+        pcd_t* temp = listGet(l, i);
+        
+        if(temp->z > stats.max.z){
+            stats.max = *temp;
+        }
+        else if(temp->z < stats.min.z){
+            stats.min = *temp;
+        }
+    }
+    return stats;
 }
 
 /**
  * Reads point cloud data from steam and
  * stores each point an expanding list
+ * @param file input stream, size of list, and pointer to list
+ * @return void (no return type)
  */
-readPointCloudData(FILE *stream, int *rasterWidth, List* pc)
+void readPointCloudData(FILE *stream, int *rasterWidth, List *pc)
 {
-    stream = fopen("test.xyz", "r");
-    fscanf(stream, "%d", &rasterWidth);
-    pcd_t data;
-    while(fscanf(stream,"%lf %lf %lf", &data.x, &data.y, &data.z)==3){
-            pc = allocateArray(rasterWidth, rasterWidth);
-            
+    //stream = fopen("test.xyz", "r");
+    fscanf(stream, "%d", rasterWidth);
+    pcd_t pts;
+    pc = allocateArray(rasterWidth, rasterWidth);
+    listInit(pc, (*(rasterWidth) * *(rasterWidth)));
+    while(fscanf(stream,"%lf %lf %lf", &pts.x, &pts.y, &pts.z)==3){
+            listAddEnd(pc, &pts);
     }
-
-
-
     fclose(stream);
 }
 
 /**
+ * Function that creates a gif image of the point-cloud 
+ * data
+ * @param pointer to list, width, and file name
+ * @return void (no return type)
+ * Divide the range of heights into 256 equal lengths
+ * Assign heights in the lowest range to black (0, 0, 0)
+ * Assign heights in the largest range to white (255, 255, 255)
+ * Heights in other ranges are distributed proportionally
  * 
  */
 void imagePointCloud(List *l, int width, char *fileName)
 {
-    
+    PointCloudStats stats = stat2(l);
 
 }
