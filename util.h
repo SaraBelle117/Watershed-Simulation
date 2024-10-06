@@ -10,12 +10,12 @@ typedef struct
     int size; //current size of the list
 }List;
 
-int listInit(List* l, int max_element_size);
+int listInit(List* l, int max_size, int max_element_size);
 void listAddEnd(List* l, void* elmt);
 void *listGet(List* l, int index);
 void *allocateArray(int rows, int columns);
 
-#endif UTIL_H
+#endif
 
 
 

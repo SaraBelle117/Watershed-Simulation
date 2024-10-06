@@ -1,8 +1,6 @@
 #ifndef POINTCLOUD_H
 #define POINTCLOUD_H
-
-void stat1(); 
-PointCloudStats stat2(List *l);
+#include "util.h"
 
 typedef struct
 {
@@ -26,6 +24,9 @@ typedef struct
 
 }PointCloudStats;
 
-
+void stat1(); 
+PointCloudStats stat2(List *l);
+void imagePointCloud(List *l, int width, char *fileName);
+void readPointCloudData(FILE *stream, int *rasterWidth, List *pc);
 
 #endif

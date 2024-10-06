@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "util.h"
 #include "pointcloud.h"
 
@@ -9,12 +10,12 @@
  */
 void *allocateArray(int rows, int columns)
 {
-    List *l;
-   l->data = (double*)calloc((rows * columns), sizeof(double));
-    if(!l->data){
-        return NULL;
+    void* arr = calloc((rows * columns), sizeof(double));
+    if(!arr){
+        fprintf(stderr, "Could not allocate memory!\n");
+        exit(-1);
     }
-    return l->data;
+    return arr;
 }
 
 /**
@@ -23,12 +24,18 @@ void *allocateArray(int rows, int columns)
  * capacity 
  * default max size = 10
  */
-int listInit(List* l, int max_element_size)
+int listInit(List* l, int max_size, int max_element_size)
 {
-    l->max_size = 10; //default max size = 10
+    l->max_size = max_size; 
     l->max_element_size = max_element_size; //setting capacity
     l->size = 0; //current list is empty
+
     l->data = allocateArray(l->max_size, l->max_element_size);
+    if(!l->data){
+        fprintf(stderr, "Failed to allocate memory for the list.\n");
+        exit(-1);
+    }
+
     return 0;
 }
 
@@ -39,16 +46,26 @@ int listInit(List* l, int max_element_size)
  */
 void listAddEnd(List* l, void* elmt)
 {
+    //error checking for if l or element is null
+    if(!l || !elmt){
+        fprintf(stderr, "List or element is NULL!\n");
+        exit(-1);
+    }
+
     if(l->size >= l->max_size){
         int double_size = l->max_size * 2;
-        void *arr = malloc((double_size)* l->max_element_size);
-        memcpy(arr, l->data, (l->size * l->max_element_size));
+        void *arr = malloc(double_size * l->max_element_size);
+        if(!arr){
+            fprintf(stderr, "Oh no! Arr was not rellocated!");
+            exit(-1);
+        }
+        memcpy(arr, l->data, l->size * l->max_element_size);
         free(l->data);
         l->data = arr;
         l->max_size = double_size;
     }
 
-    memcpy((char*)l->data + (l->size * l->max_element_size), elmt, (l->max_size)*(l->max_element_size));
+    memcpy((char*)l->data + (l->size * l->max_element_size), elmt, l->max_element_size);
     l->size++; //added element, so size is increased
 }
 
@@ -60,8 +77,14 @@ void listAddEnd(List* l, void* elmt)
  */
 void *listGet(List* l, int index)
 {
-    if(index < 0 || index >= l->size){
-        return NULL;
+    //printf("Index: %d and size: %d\n", index, l->size);
+    if(!l){
+        fprintf(stderr, "List is NULL! Uh-oh!\n");
+        exit(-1);
+    }
+    if(index < 0 || index >= (int)l->size){
+        fprintf(stderr, "Index %d is out of bounds for size %d. :(\n", index, (int)l->size);
+        exit(-1);
     }
    return (char*)l->data + (index * l->max_element_size);
 }
