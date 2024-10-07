@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     if(ptr != stdin){
         fclose(ptr);
     }
+    printf("Finished generating bitmap. Check out.gif for the result.\n");
 
     return 0;
 }

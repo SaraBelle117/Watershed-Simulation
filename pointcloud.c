@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "pointcloud.h"
 #include "util.h"
 #include "bmp.h"
@@ -70,15 +71,33 @@ PointCloudStats stat2(List *l)
     pcd_t* setVal = listGet(l, 0);
     stats.min = *setVal;
     stats.max = *setVal;
+    //printf("minX: %lf minY: %lf maxX: %lf maxY: %lf\n", stats.min.x, stats.min.y, stats.max.x, stats.max.y);
     for(int i = 0; i < l->size; i++){
         pcd_t* temp = listGet(l, i);
         
         if(temp->z > stats.max.z){
-            stats.max = *temp;
+            stats.max.z = temp->z;
         }
         else if(temp->z < stats.min.z){
-            stats.min = *temp;
+            stats.min.z = temp->z;
         }
+
+        if(temp->x < stats.min.x){
+            stats.min.x = temp->x;
+        }
+        else if(temp->x > stats.max.x){
+            stats.max.x = temp->x;
+        }
+
+        if(temp->y < stats.min.y){
+            stats.min.y = temp->y;
+        }
+        else if(temp->y > stats.max.y){
+            stats.max.y = temp->y;
+        }
+    }
+    if(stats.min.z < 0){
+        stats.min.z = 0;
     }
     return stats;
 }
@@ -132,34 +151,68 @@ void imagePointCloud(List *l, int width, char *fileName)
     Bitmap *b = bm_create(width, width);
     PointCloudStats stats = stat2(l);
     double range = stats.max.z - stats.min.z;
+    int skip = 0;
 
     if(range <= 0){
         fprintf(stderr, "Invalid: Range is less than or equal to zero.\n");
         exit(-1);
     }
-
-    printf("Range: %lf,  width: %d\n", range, width);
+    //printf("Range: %lf,  width: %d\n", range, width);
+    printf("Min z: %lf Max z: %lf\n", stats.min.z, stats.max.z);
+    //printf("Min x: %lf, max x: %lf, min y: %lf, max y: %lf\n", stats.min.x, stats.max.x, stats.min.y, stats.max.y);
     for(int i = 0; i < l->size; i++){
         pcd_t* temp = listGet(l, i);
-        //printf("%lf %lf %lf\n", temp->x, temp->y, temp->z);
+
         if(!temp){
             fprintf(stderr, "Null pointer at index %d\n", i);
+            printf("temp is null!!!\n");
             continue;
         }
+        
+        int x, y;
+        //printf("Original x: %lf y: %lf z: %lf\n", temp->x, temp->y, temp->z);
+        //checks if x and y need to be scaled
+
+        /*
+        if(stats.max.x != stats.min.x){ //(stats.max.x - stats.min.x) > 0
+            x = (((temp->x - stats.min.x)/(stats.max.x - stats.min.x))* (width - 1));
+        }
+        else{
+            x = (int)temp->x;
+        }
+        
+        if(stats.max.y != stats.min.y){ //(stats.max.y - stats.min.y) > 0
+            y = (((temp->y - stats.min.y)/(stats.max.y - stats.min.y))* (width - 1));
+        }
+        else{
+            y = (int)temp->y;
+        } */
+        x = (((temp->x - stats.min.x)/(stats.max.x - stats.min.x))* (width - 1));
+        y = (((temp->y - stats.min.y)/(stats.max.y - stats.min.y))* (width - 1));
+
         //skip invalid points
-        if((int)temp->z <= 0){
+        if((int)temp->z < 0 || x < 0 || x >= width || y < 0 || y >= width){
+            skip++;
+            printf("Skip #%d at x: %d y: %d z: %lf\n", skip, x, y, temp->z);
             continue; 
         }
-        int grayScale = (((int)temp->z - stats.min.z)/range)*255;
-        int hexVal = ((grayScale << 24)|(grayScale << 16)|(grayScale <<8)|grayScale);
-        char hex[9];
-        sprintf(hex, "%08X", hexVal);
-        //printf("Hex: %s Grayscale: %d, Putting points x:  %d, y: %d\n", hex, grayScale, (int)temp->x,(int)temp->y);
-        bm_set_color(b, bm_atoi(hex));
+
+        int grayScale; 
+        grayScale = (int)(((temp->z - stats.min.z) / range) * 255.0);
+    
+        if(grayScale == 0){
+             printf("GrayScale: %d  z: %lf at x: %d y: %d\n", grayScale, temp->z, x, y);
+        }
+     
+        //ensures grayScale is a valid #
+        if(grayScale < 0) grayScale = 0;
+        if(grayScale > 255) grayScale = 255;
+
+        //printf("GrayScale: %d  z: %lf\n", grayScale, temp->z);
+        bm_set_color(b, bm_rgb(grayScale, grayScale, grayScale));
         //bm_set_color(b, bm_atoi("pink"));
-        bm_putpixel(b,(int)temp->x, (int)temp->y);
+        bm_putpixel(b, x, y);
     }
-    printf("Saving bitmap to out.gif!\n");
     bm_save(b, fileName);
     bm_free(b);
 }
