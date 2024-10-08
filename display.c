@@ -24,7 +24,6 @@ int main(int argc, char *argv[])
 
     int width;
     fscanf(ptr, "%d", &width);
-    //scanf("%d", &width);
 
     List lp; 
     if(listInit(&lp, width, sizeof(pcd_t))!= 0){
@@ -32,7 +31,6 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    //readPointCloudData(stdin, &width, &lp);
     readPointCloudData(ptr, &width, &lp);
 
     imagePointCloud(&lp, width, "out.gif");
@@ -40,7 +38,6 @@ int main(int argc, char *argv[])
     if(ptr != stdin){
         fclose(ptr);
     }
-    printf("Finished generating bitmap. Check out.gif for the result.\n");
 
     return 0;
 }
