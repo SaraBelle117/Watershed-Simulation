@@ -1,5 +1,7 @@
 #ifndef POINTCLOUD_H
 #define POINTCLOUD_H
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 #include "util.h"
 
 typedef struct

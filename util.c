@@ -11,6 +11,8 @@
 void *allocateArray(int rows, int columns)
 {
     void* arr = calloc((rows * columns), sizeof(double));
+
+    //ensuring the memory was allocated
     if(!arr){
         fprintf(stderr, "Could not allocate memory!\n");
         exit(-1);
@@ -31,6 +33,8 @@ int listInit(List* l, int max_size, int max_element_size)
     l->size = 0; //current list is empty
 
     l->data = allocateArray(l->max_size, l->max_element_size);
+
+    //ensuring memory allocation was successful
     if(!l->data){
         fprintf(stderr, "Failed to allocate memory for the list.\n");
         exit(-1);
@@ -55,10 +59,12 @@ void listAddEnd(List* l, void* elmt)
     if(l->size >= l->max_size){
         int double_size = l->max_size * 2;
         void *arr = malloc(double_size * l->max_element_size);
+        
         if(!arr){
             fprintf(stderr, "Oh no! Arr was not rellocated!");
             exit(-1);
         }
+
         memcpy(arr, l->data, l->size * l->max_element_size);
         free(l->data);
         l->data = arr;
@@ -77,14 +83,18 @@ void listAddEnd(List* l, void* elmt)
  */
 void *listGet(List* l, int index)
 {
-    //printf("Index: %d and size: %d\n", index, l->size);
+    //ensures l is not null
     if(!l){
         fprintf(stderr, "List is NULL! Uh-oh!\n");
         exit(-1);
     }
+    
+    //bug fixes, makes sure index is a valid num
     if(index < 0 || index >= (int)l->size){
         fprintf(stderr, "Index %d is out of bounds for size %d. :(\n", index, (int)l->size);
         exit(-1);
     }
+    
+    //(char*) to ensure pointer arithmetic is done in bytes
    return (char*)l->data + (index * l->max_element_size);
 }
