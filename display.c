@@ -22,22 +22,35 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    int width;
-    fscanf(ptr, "%d", &width);
 
-    List lp; 
-    if(listInit(&lp, width, sizeof(pcd_t))!= 0){
-        fprintf(stderr, "List not initiliazed correctly!\n");
+    List* l = malloc(sizeof(List));
+    if(!l){
+        fprintf(stderr, "Could not allocate memory for list.\n");
         exit(-1);
     }
 
-    readPointCloudData(ptr, &width, &lp);
+    pointcloud_t *lp = readPointCloudData(ptr, l);
 
-    imagePointCloud(&lp, width, "out.gif");
+    if(!lp){
+        fprintf(stderr,"failed to read pointcloud data\n");
+        free(lp);
+        exit(-1);
+    }
 
     if(ptr != stdin){
         fclose(ptr);
     }
+
+    imagePointCloud(lp, "out.gif");
+
+    if(l->data){
+        free(l->data);
+    }
+
+    free(l);
+    free(lp);
+
+    printf("Bitmap completed. Check out.gif for result.\n");
 
     return 0;
 }

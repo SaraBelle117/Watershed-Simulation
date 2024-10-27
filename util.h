@@ -1,6 +1,6 @@
 #ifndef UTIL_H
 #define UTIL_H
-#define INDEX(row, col, numCol) ((row)*(numCol)+(col))
+#define INDEX(row, col, numCol) ((row) * (numCol) + (col))
 
 typedef struct 
 {   
@@ -16,6 +16,3 @@ void *listGet(List* l, int index);
 void *allocateArray(int rows, int columns);
 
 #endif
-
-
-

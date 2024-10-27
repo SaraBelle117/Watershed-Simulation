@@ -8,10 +8,12 @@
 /**
  * allocate space for a 2D array &
  * initializes all elements to zero
+ * @param int rows
+ * @param int columns
  */
 void *allocateArray(int rows, int columns)
 {
-    void* arr = calloc((rows * columns), sizeof(double));
+    void* arr = calloc((rows * columns), sizeof(pcd_t));
 
     //ensuring the memory was allocated
     if(!arr){
@@ -24,15 +26,19 @@ void *allocateArray(int rows, int columns)
 /**
  * initializes a List structure with data
  * to create an empty list & sets its
- * capacity 
- * default max size = 10
+ * capacity -- default max size = 10
+ * @param List* list 
+ * @param int maximum size of list
+ * @param max_element_size maximum data size (bytes)
  */
 int listInit(List* l, int max_size, int max_element_size)
 {
     l->max_size = max_size; 
-    l->max_element_size = max_element_size; //setting capacity
-    l->size = 0; //current list is empty
-
+    //setting capacity
+    l->max_element_size = max_element_size;
+    //cureent list is empty
+    l->size = 0; 
+    //allocates data for array 
     l->data = allocateArray(l->max_size, l->max_element_size);
 
     //ensuring memory allocation was successful
@@ -40,14 +46,14 @@ int listInit(List* l, int max_size, int max_element_size)
         fprintf(stderr, "Failed to allocate memory for the list.\n");
         exit(-1);
     }
-
     return 0;
 }
 
 /**
- * adds an element to the end of the list
- * doubles the size of the list if the list is
- * full
+ * Adds an element to the end of the list & 
+ * doubles the size of the list if the list is full
+ * @param List* l
+ * @param void* element to add
  */
 void listAddEnd(List* l, void* elmt)
 {
@@ -58,16 +64,16 @@ void listAddEnd(List* l, void* elmt)
     }
 
     if(l->size >= l->max_size){
+        //doubles the size 
         int double_size = l->max_size * 2;
-        void *arr = malloc(double_size * l->max_element_size);
-        
+        //rellocates memory with new size 
+        void *arr = realloc(l->data, double_size * l->max_element_size);
+
         if(!arr){
             fprintf(stderr, "Oh no! Arr was not rellocated!");
             exit(-1);
         }
 
-        memcpy(arr, l->data, l->size * l->max_element_size);
-        free(l->data);
         l->data = arr;
         l->max_size = double_size;
     }
@@ -77,25 +83,25 @@ void listAddEnd(List* l, void* elmt)
 }
 
 /**
- * returns a pointer to the data in the
- * list 
- * (retrieves an element in the list by
- * index)
+ * Retrieves an element in the list by index
+ * @returns a pointer to the data in the list 
+ * @returns void pointer --> to where the data is in the list
  */
 void *listGet(List* l, int index)
 {
     //ensures l is not null
-    if(!l){
+    if(!l || !l->data){
         fprintf(stderr, "List is NULL! Uh-oh!\n");
-        exit(-1);
+        return NULL;
     }
     
     //bug fixes, makes sure index is a valid num
     if(index < 0 || index >= (int)l->size){
         fprintf(stderr, "Index %d is out of bounds for size %d. :(\n", index, (int)l->size);
-        exit(-1);
+        return NULL;
     }
     
     //(char*) to ensure pointer arithmetic is done in bytes
+    //returns the index (accounting for bytes in memory, affecting pos)
    return (char*)l->data + (index * l->max_element_size);
 }
