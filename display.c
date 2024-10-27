@@ -39,5 +39,7 @@ int main(int argc, char *argv[])
         fclose(ptr);
     }
 
+    free(lp);
+
     return 0;
 }
