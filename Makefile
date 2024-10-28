@@ -1,5 +1,5 @@
 watershed: watershed.c pointcloud.c util.c bmp.c
-	gcc -Wall -g -o watershed watershed.c pointcloud.c util.c bmp.c
+	gcc -Wall -g -o watershed watershed.c pointcloud.c util.c bmp.c -lm
 	
 display: display.c pointcloud.c bmp.c util.c
 	gcc -Wall -g -o display display.c pointcloud.c bmp.c util.c -lm
