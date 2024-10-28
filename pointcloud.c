@@ -447,6 +447,7 @@ void imagePointCloudWater(pointcloud_t* l, double maxwd, char* filename)
     }
     //creates the bitmap
     Bitmap *b = bm_create(l->rows, l->cols);
+    //ensures the bitmap was created
     if(!b){
         fprintf(stderr, "Bitmap FAIL\n");
         exit(-1);
@@ -480,9 +481,9 @@ void imagePointCloudWater(pointcloud_t* l, double maxwd, char* filename)
         if(position->wd <= 0 || bluescale <= 0){
             bluescale = grayscale;
         }
-        
-
+        //sets pixel color with values 
         bm_set_color(b, bm_rgb(grayscale, grayscale, bluescale));
+        //puts pixel on the bitmap
         bm_putpixel(b, x, y);
     }
 
