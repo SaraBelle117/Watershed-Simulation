@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     free(l);
     free(lp);
 
-    printf("Bitmap completed. Check out.gif for result.\n");
+    //printf("Bitmap completed. Check out.gif for result.\n");
 
     return 0;
 }

@@ -50,6 +50,11 @@ int main(int argc, char *argv[]){
         exit(-1);
     }
 
+    if(iwater < 0){
+        fprintf(stderr, "Initial water amount cannot be negative, cannot be %f.\n", iwater);
+        exit(-1);
+    }
+
 
     List* l = malloc(sizeof(List));
     if(!l){
@@ -83,24 +88,26 @@ int main(int argc, char *argv[]){
     //printf("seq: %d\n", seq);
     for(int i = 0; i < iter; i++){
         watershedStep(lp);
-        //printf("Completed step %d\n", i);
-        for(int j = 0; j < seq; j++){
+
+        //if seq is zero, or a multiple of seq 
+        if(seq == 0 || (i % seq == 0 && seq > 0)){
             //formats file to be filename(index).gif
             //allocates space for index + .gf (and the new filename)
-            char indexChar[20];
-            sprintf(indexChar, "%d.gif", j);
-            char* fileIndex = malloc((strlen(ofilebase) + strlen(indexChar)) *sizeof(char));
-
-            //ensures we allocated space for fileIndex (name of file with /index + .gif)
+            char* fileIndex = malloc((strlen(ofilebase) + 20) *sizeof(char));
+             //ensures we allocated space for fileIndex (name of file with /index + .gif)
             if(!fileIndex){
-                exit(-1);
                 fprintf(stderr, "Failed to allocate memory for filename.\n");
+                free(l);
+                free(lp);
+                exit(-1);
             }
-            //copies original file name to new, and then appends index char at the end
-            strcpy(fileIndex, ofilebase);
-            strcat(fileIndex, indexChar);
-
-            //printf("Making file %d, name: %s\n", j, fileIndex);
+            //if seq is zero, print once
+            if(seq == 0){
+                sprintf(fileIndex, "%s.gif", ofilebase);
+            }
+            else{
+                sprintf(fileIndex, "%s%d.gif", ofilebase, i);
+            }
             imagePointCloudWater(lp, maxwdepth, fileIndex);
             free(fileIndex);
         }

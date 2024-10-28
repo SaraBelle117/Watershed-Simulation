@@ -215,8 +215,6 @@ void imagePointCloud(pointcloud_t *l, char *fileName)
         bm_set_color(b, bm_rgb(grayScale, grayScale, grayScale));
         bm_putpixel(b, x, y);
     }
-    //rotates bitmap in correct direction TODO: FIXME
-    b = bm_rotate_cw(b);
 
     if(!b){
         fprintf(stderr, "Failed to rotate bitmap.\n");
@@ -244,6 +242,7 @@ int initializeWater(pointcloud_t *l)
     pcd_t *southwest = NULL;
     pcd_t *northeast = NULL;
 
+    //create 1D array to hold the list of vals 
     pcd_t **arr = calloc((l->rows * l->cols), sizeof(pcd_t));
 
     if(!arr){
@@ -274,13 +273,9 @@ int initializeWater(pointcloud_t *l)
         //sets the found max x & y values to northeast
         if(position->x == p_stats.max.x && position->y == p_stats.max.y) northeast = position;
 
-        //convert each point into x & y values
+        //convert each point into x & y values (aka scaling/normalizing values)
         int x = normalize(position->x, p_stats.min.x, p_stats.max.x, l->rows);
         int y = normalize(position->y, p_stats.min.y, p_stats.max.y, l->cols);
-
-        if(p_stats.max.x == x || p_stats.max.y == y){
-            printf("Max x: %f, x: %d, max y: %f, y: %d\n", p_stats.max.x, x, p_stats.max.y, y);
-        }
 
         //sets the point in the corresponding point in 1D array
         arr[INDEX(y, x, l->cols)] = position;
@@ -365,7 +360,7 @@ void watershedStep(pointcloud_t* l)
 
         //if north neighbor is null, set water amount to 0, else calculate waterflow in north dir
         if(!pos->north){
-            pos->north = 0;   
+            pos->northflow = 0;   
         }
         else{
             pos->northflow = f(pos->z, pos->wd, pos->north->z, pos->north->wd, l->wcoef);
@@ -408,18 +403,32 @@ void watershedStep(pointcloud_t* l)
  * scaled by the water coefficient
  * f(pos->z, pos->wd, pos->dir->z, pos->dir->wd) 
  * (pos->dir->z + pos->dir->wd) − (pos->z + pos->wd) ∗ 𝑤𝑐𝑜𝑒𝑓
+ * @param elevation of cell
+ * @param water depth of cell
+ * @param neighbor's elevation
+ * @param neighbor's water depth
+ * @param water coefficient (given value)
+ * @return double value of the calculated water depth 
  */
 double f(double pos_z, double pos_wd, double dir_z, double dir_wd, double wcoef)
 {  
-    return (((dir_z + dir_wd) - (pos_z + pos_wd)) * wcoef);
+    //added * pos_wd to ensure no water comes from no where (per professor's suggestion in Piazza)
+    return (((dir_z + dir_wd) - (pos_z + pos_wd)) * wcoef) * pos_wd;
 }
 
 /**
  * Converts a given point into a given index
+ * @param point (x or y)
+ * @param min value of given value
+ * @param max value of given value
+ * @param index (rows if x, cols if y)
+ * @return int normalized/scaled value
  */
 int normalize(double point, double  min, double max, int index){
     //fixes issue with max point 
     if(point == max) return (index - 1);
+    //fixes issue with division by zero
+    if(max == min) return 0; 
     return (int)((point - min)/(max - min)) * (index - 1);
 }
 
@@ -451,45 +460,33 @@ void imagePointCloudWater(pointcloud_t* l, double maxwd, char* filename)
         //if not a valid position (null or otherwise), go to next point
         if(!position) continue;
 
-        //normalizes (scales) x & y points 
-        //int x = (int)normalize(position->x, st.min.x, st.max.x, l->rows);
-        //int y = (int)normalize(position->y, st.min.y, st.max.y, l->cols);
-
+        //normalizes (scales) x & y points (ended up not using normalize function due to rounding issues)
         int x = (int)round(((position->x - st.min.x)/(st.max.x - st.min.x))* (l->rows - 1));
         int y = (int)round(((position->y - st.min.y)/(st.max.y - st.min.y))* (l->cols - 1));
       
         int grayscale, bluescale; 
-
-        bluescale = (position->wd / maxwd)* 255 * 6;
-
-        if(bluescale > 255) bluescale = 255;
-        if(bluescale < 0) bluescale = 0;
-
+        //calculates blue scale val
+        bluescale = (position->wd / maxwd) * 255;
         //calculates grayScale val
-        grayscale = (int)((((position->z - st.min.z)/range)) * 255.0);
-    
-        if(position->wd > 0){
-            //grayscale *= 0.7;
-         }
+        grayscale = (int)(((position->z - st.min.z) / range) * 255.0);
 
         //ensures grayscale is a valid #
         if(grayscale < 0) grayscale = 0;
         if(grayscale > 255) grayscale = 255;
-
-        //printf("water depth: %f, grayscale: %d, bluescale: %d\n", position->wd, grayscale, bluescale);
+        //ensures bluescale is a valid # 
+        if(bluescale > 255) bluescale = 255;
+    
+        //mainly for aesthetic purposes (trying to make sure bluescale doesn't get to 0)
+        if(position->wd <= 0 || bluescale <= 0){
+            bluescale = grayscale;
+        }
+        
 
         bm_set_color(b, bm_rgb(grayscale, grayscale, bluescale));
         bm_putpixel(b, x, y);
     }
 
-    //b = bm_rotate_cw(b);
-
-    if(!b){
-        fprintf(stderr, "Failed to rotate bitmap.\n");
-        return;
-    }
-
     bm_save(b, filename);
     bm_free(b);
-    //printf("Bitmap created. Check file for result.\n");
+
 }
